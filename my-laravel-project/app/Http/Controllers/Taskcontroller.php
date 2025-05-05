@@ -63,7 +63,7 @@ class TaskController extends Controller
         $task->update($request->only('title', 'description', 'due_date'));
         $task->interns()->sync($request->interns);
 
-        return redirect()->route('Admin.Task.index')->with('success', 'Task updated!'); // Fixed route case
+        return redirect()->route('tasks.index')->with('success', 'Task updated!'); // Fixed route name
     }
 
    
