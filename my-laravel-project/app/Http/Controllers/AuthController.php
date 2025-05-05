@@ -59,4 +59,28 @@ class AuthController extends Controller
             'email' => 'Invalid credentials.',
         ]);
     }
+
+    // Show Admin Login Page
+    public function showAdminLogin()
+    {
+        return view('Admin.login');
+    }
+
+    // Handle Admin Login
+    public function adminLogin(Request $request)
+    {
+        $credentials = $request->validate([
+            'email'    => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if (Auth::guard('admin')->attempt($credentials)) {
+            $request->session()->regenerate();
+            return redirect()->route('admin.dashboard');
+        }
+
+        return back()->withErrors([
+            'email' => 'Invalid admin credentials.',
+        ]);
+    }
 }
