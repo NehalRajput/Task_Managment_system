@@ -14,96 +14,62 @@ class AdminController extends Controller
 {
     public function index()
     {
-        $admins = Admin::with('role')->get();
-        return view('admin.admins.index', compact('admins'));
+        $admins = Admin::all();
+        return view('Admin.index', compact('admins'));
     }
 
     public function create()
     {
-        $roles = Role::whereIn('name', ['admin', 'super_admin'])->get();
-        return view('admin.admins.create', compact('roles'));
+        return view('Admin.create');
     }
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:admins,email',
-            'password' => 'required|min:8|confirmed',
-            'role_id' => 'required|exists:roles,id',
-            'phone' => 'nullable|string|max:20',
-            'designation' => 'nullable|string|max:100',
-            'bio' => 'nullable|string',
-            'profile_image' => 'nullable|image|max:2048'
-        ]);
+            'email' => 'required|email|unique:admins',
+            'password' => 'required|min:6',
+            ]);
 
-        $data = $request->except('password', 'profile_image');
-        $data['password'] = Hash::make($request->password);
-
-        if ($request->hasFile('profile_image')) {
-            $data['profile_image'] = $request->file('profile_image')
-                ->store('admin-profiles', 'public');
-        }
-
-        Admin::create($data);
+        $validated['password'] = Hash::make($validated['password']);
+        $validated['role_id'] = 2;
+        Admin::create($validated);
 
         return redirect()->route('admin.admins.index')
-            ->with('success', 'Admin created successfully');
+            ->with('success', 'Admin created successfully.');
     }
 
     public function edit(Admin $admin)
     {
-        $roles = Role::whereIn('name', ['admin', 'super_admin'])->get();
-        return view('admin.admins.edit', compact('admin', 'roles'));
+        return view('Admin.edit', compact('admin'));
     }
 
     public function update(Request $request, Admin $admin)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:admins,email,' . $admin->id,
-            'password' => 'nullable|min:8|confirmed',
-            'role_id' => 'required|exists:roles,id',
-            'phone' => 'nullable|string|max:20',
-            'designation' => 'nullable|string|max:100',
-            'bio' => 'nullable|string',
-            'profile_image' => 'nullable|image|max:2048'
+            'password' => 'nullable|min:6',
         ]);
 
-        $data = $request->except(['password', 'profile_image']);
-
-        if ($request->filled('password')) {
-            $data['password'] = Hash::make($request->password);
+        if (isset($validated['password'])) {
+            $validated['password'] = Hash::make($validated['password']);
+        } else {
+            unset($validated['password']);
         }
-
-        if ($request->hasFile('profile_image')) {
-            if ($admin->profile_image) {
-                Storage::disk('public')->delete($admin->profile_image);
-            }
-            $data['profile_image'] = $request->file('profile_image')
-                ->store('admin-profiles', 'public');
-        }
-
-        $admin->update($data);
+        $validated['role_id'] = 2;
+        $admin->update($validated);
 
         return redirect()->route('admin.admins.index')
-            ->with('success', 'Admin updated successfully');
+            ->with('success', 'Admin updated successfully.');
     }
 
     public function destroy(Admin $admin)
     {
-        if ($admin->isSuperAdmin()) {
-            return back()->with('error', 'Cannot delete super admin account');
-        }
-
-        if ($admin->profile_image) {
-            Storage::disk('public')->delete($admin->profile_image);
-        }
-
         $admin->delete();
 
         return redirect()->route('admin.admins.index')
-            ->with('success', 'Admin deleted successfully');
+            ->with('success', 'Admin deleted successfully.');
     }
 
     public function dashboard()
@@ -116,6 +82,7 @@ class AdminController extends Controller
             'interns' => $interns
         ]);
     }
+
     public function deleteUser(User $user)
     {
         // Check if the user is an intern

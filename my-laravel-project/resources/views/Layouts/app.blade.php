@@ -49,6 +49,10 @@
                                     <a href="{{ route('admin.interns.index') }}" class="nav-link {{ request()->routeIs('admin.interns.*') ? 'active' : '' }}">
                                         Intern
                                     </a>
+
+                                    <a href="{{ route('admin.admins.index') }}" class="nav-link {{ request()->routeIs('admin.admins.*') ? 'active' : '' }}">
+                                        Admins
+                                    </a>
                                     
                                 @endif
                             </div>
