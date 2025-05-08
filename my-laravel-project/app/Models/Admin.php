@@ -17,7 +17,7 @@ class Admin extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
-    public function rolePermissions()
+    public function permissions()
     { 
         return $this->belongsToMany(Permission::class, 'role_permissions', 'admin_id', 'permission_id');
     }
@@ -28,16 +28,16 @@ class Admin extends Authenticatable
             return true; 
         } 
 
-        return $this->rolePermissions()->where('permission', $permission)->exists();
+        return $this->permissions()->where('permission', $permission)->exists();
     }
 
     public function isAdmin()
     { 
-        return $this->role && $this->role->name === 'admin';
+        return $this->role && $this->role->name === 'super_admin';
     }
 
     public function isSuperAdmin()
-    { 
+    {
         return $this->role && $this->role->name === 'super_admin';
     }
 }

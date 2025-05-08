@@ -28,12 +28,12 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
 
     // Intern Management
     Route::controller(InternController::class)->prefix('interns')->name('interns.')->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::get('/create', 'create')->name('create');
-        Route::post('/', 'store')->name('store');
-        Route::get('/{intern}/edit', 'edit')->name('edit');
-        Route::put('/{intern}', 'update')->name('update');
-        Route::delete('/{intern}', 'destroy')->name('destroy');
+        Route::get('/', 'index')->name('index')->can('read_interns');
+        Route::get('/create', 'create')->name('create')->can('create_interns');
+        Route::post('/', 'store')->name('store')->can('create_interns');
+        Route::get('/{intern}/edit', 'edit')->name('edit')->can('update_interns');
+        Route::put('/{intern}', 'update')->name('update')->can('update_interns');
+        Route::delete('/{intern}', 'destroy')->name('destroy')->can('delete_interns');
     });
 
     /*
@@ -64,45 +64,26 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
 Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(function () {
     // Admin Management
     Route::controller(AdminController::class)->prefix('admins')->name('admins.')->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::get('/create', 'create')->name('create');
-        Route::post('/', 'store')->name('store');
-        Route::get('/{admin}/edit', 'edit')->name('edit');
-        Route::put('/{admin}', 'update')->name('update');
-        Route::delete('/{admin}', 'destroy')->name('destroy');
+        Route::get('/', 'index')->name('index')->can('read_admins');
+        Route::get('/create', 'create')->name('create')->can('create_admins');
+        Route::post('/', 'store')->name('store')->can('create_admins');
+        Route::get('/{admin}/edit', 'edit')->name('edit')->can('update_admins');
+        Route::put('/{admin}', 'update')->name('update')->can('update_admins');
+        Route::delete('/{admin}', 'destroy')->name('destroy')->can('delete_admins');
     });
 
     // Delete User
     Route::delete('/users/{user}', [AdminController::class, 'deleteUser'])->name('delete-user');
 
-
-    // Role Management
-    Route::controller(RoleController::class)->prefix('roles')->name('roles.')->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::get('/create', 'create')->name('create');
-        Route::post('/', 'store')->name('store');
-        Route::get('/{role}/edit', 'edit')->name('edit');
-        Route::put('/{role}', 'update')->name('update');
-        Route::delete('/{role}', 'destroy')->name('destroy');
-    });
-
-    // Permission Management
-    Route::controller(PermissionController::class)->prefix('permissions')->name('permissions.')->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::get('/create', 'create')->name('create');
-        Route::post('/', 'store')->name('store');
-        Route::get('/{permission}/edit', 'edit')->name('edit');
-        Route::put('/{permission}', 'update')->name('update');
-        Route::delete('/{permission}', 'destroy')->name('destroy');
-    });
+   
 
     Route::controller(TaskController::class)->group(function () {
-        Route::get('/tasks', 'index')->name('tasks.index');
-        Route::get('/tasks/create', 'create')->name('tasks.create');
-        Route::post('/tasks', 'store')->name('tasks.store');
-        Route::get('/tasks/{task}/edit', 'edit')->name('tasks.edit');
-        Route::put('/tasks/{task}', 'update')->name('tasks.update');
-        Route::delete('/tasks/{task}', 'destroy')->name('tasks.destroy');
+        Route::get('/tasks', 'index')->name('tasks.index')->can('read_tasks');
+        Route::get('/tasks/create', 'create')->name('tasks.create')->can('create_tasks');
+        Route::post('/tasks', 'store')->name('tasks.store')->can('create_tasks');
+        Route::get('/tasks/{task}/edit', 'edit')->name('tasks.edit')->can('update_tasks');
+        Route::put('/tasks/{task}', 'update')->name('tasks.update')->can('update_tasks');
+        Route::delete('/tasks/{task}', 'destroy')->name('tasks.destroy')->can('delete_tasks');
         Route::post('/tasks/{task}/assign-intern', 'assignIntern')->name('tasks.assign-intern');
         Route::delete('/tasks/{task}/interns/{intern}', 'detachIntern')->name('tasks.detach-intern');
     });

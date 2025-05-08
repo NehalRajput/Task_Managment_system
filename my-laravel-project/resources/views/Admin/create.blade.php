@@ -36,7 +36,35 @@
                         </div>
                     </div>
 
-                  
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Permissions</label>
+                        <div class="mt-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            @foreach($permissions as $permission)
+                            {{-- @dd($permission÷) --}}
+                                <div class="relative flex items-start">
+                                    <div class="flex items-center h-5">
+                                        <input id="permission_{{ $permission->id }}" 
+                                               name="permissions[]" 
+                                               type="checkbox"
+                                               value="{{ $permission->id }}"
+                                               {{ in_array($permission->id, old('permissions', [])) ? 'checked' : '' }}
+                                               class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                                    </div>
+                                    <div class="ml-3 text-sm">
+                                        <label for="permission_{{ $permission->id }}" class="font-medium text-gray-700">
+                                            {{ $permission->permission }}
+                                        </label>
+                                        @if($permission->description)
+                                            <p class="text-gray-500">{{ $permission->description }}</p>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                        @error('permissions')
+                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
 
                     <div>
                         <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
