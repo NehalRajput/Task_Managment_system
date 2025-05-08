@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -6,26 +7,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('sender_id')->constrained('users');
-            $table->string('sender_type'); // 'intern' or 'admin'
-            $table->foreignId('receiver_id')->constrained('users');
-            $table->string('receiver_type'); // 'intern' or 'admin'
-            $table->text('message');
+            $table->text('content');
+            $table->string('sender_type');
+            $table->unsignedBigInteger('sender_id');
+            $table->string('receiver_type');
+            $table->unsignedBigInteger('receiver_id');
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
+
+            $table->index(['sender_type', 'sender_id']);
+            $table->index(['receiver_type', 'receiver_id']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('messages');

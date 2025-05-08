@@ -10,10 +10,10 @@ class Message extends Model
     use HasFactory;
 
     protected $fillable = [
-        'sender_id',
         'sender_type',
-        'receiver_id',
+        'sender_id',
         'receiver_type',
+        'receiver_id',
         'message',
         'read_at'
     ];
@@ -24,11 +24,11 @@ class Message extends Model
 
     public function sender()
     {
-        return $this->belongsTo(User::class, 'sender_id');
+        return $this->morphTo();
     }
 
     public function receiver()
     {
-        return $this->belongsTo(User::class, 'receiver_id');
+        return $this->morphTo();
     }
 }

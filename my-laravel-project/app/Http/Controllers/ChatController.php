@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Message;
 use App\Models\User;
+use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,18 +12,20 @@ class ChatController extends Controller
 {
     public function index()
     {
-        $user = Auth::user();
+        $currentUser = Auth::user();
+        $isAdmin = $currentUser instanceof Admin;
         
-        if ($user->role === 'admin') {
-            $users = User::where('role', 'intern')->get();
+        if ($isAdmin) {
+            $users = User::whereHas('role', function($query) {
+                $query->where('name', 'intern');
+            })->get();
+            $viewData = ['interns' => $users, 'admins' => collect()];
         } else {
-            $users = User::where('role', 'admin')->get();
+            $admins = Admin::all();
+            $viewData = ['interns' => collect(), 'admins' => $admins];
         }
 
-        return view('chat.index', [
-            'interns' => $user->role === 'admin' ? $users : collect(),
-            'admins' => $user->role === 'intern' ? $users : collect()
-        ]);
+        return view('chat.index', $viewData);
     }
 
     public function sendMessage(Request $request)
@@ -32,57 +35,57 @@ class ChatController extends Controller
             'message' => 'required|string',
         ]);
 
-        $message = Message::create([
-            'sender_id' => Auth::id(),
-            'sender_type' => Auth::user()->role, // Assuming you have a role field in users table
-            'receiver_id' => $request->receiver_id,
-            'receiver_type' => $request->receiver_type,
+        $sender = Auth::user();
+        $receiver = $request->receiver_type === 'admin' 
+            ? Admin::find($request->receiver_id)
+            : User::find($request->receiver_id);
+
+        $message = new Message([
             'message' => $request->message,
         ]);
 
-        // Broadcast the message
+        $message->sender()->associate($sender);
+        $message->receiver()->associate($receiver);
+        $message->save();
+
         broadcast(new MessageSent($message))->toOthers();
 
         return response()->json([
             'status' => 'success',
-            'message' => $message
+            'message' => $message->load('sender', 'receiver')
         ]);
     }
 
     public function getMessages(Request $request)
     {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-        ]);
+        $currentUser = Auth::user();
+        $otherUser = $request->route('user');
 
-        $messages = Message::where(function($query) use ($request) {
-            $query->where('sender_id', Auth::id())
-                  ->where('receiver_id', $request->user_id);
-        })->orWhere(function($query) use ($request) {
-            $query->where('sender_id', $request->user_id)
-                  ->where('receiver_id', Auth::id());
-        })
-        ->orderBy('created_at', 'asc')
-        ->get();
+        $messages = Message::where(function($query) use ($currentUser, $otherUser) {
+            $query->where('sender_id', $currentUser->id)
+                  ->where('sender_type', get_class($currentUser))
+                  ->where('receiver_id', $otherUser->id)
+                  ->where('receiver_type', get_class($otherUser));
+        })->orWhere(function($query) use ($currentUser, $otherUser) {
+            $query->where('sender_id', $otherUser->id)
+                  ->where('sender_type', get_class($otherUser))
+                  ->where('receiver_id', $currentUser->id)
+                  ->where('receiver_type', get_class($currentUser));
+        })->orderBy('created_at', 'asc')->get();
 
-        return response()->json([
-            'status' => 'success',
-            'messages' => $messages
-        ]);
+        return response()->json($messages);
     }
 
     public function markAsRead(Request $request)
     {
         $request->validate([
-            'message_id' => 'required|exists:messages,id',
+            'message_id' => 'required|exists:messages,id'
         ]);
 
         $message = Message::find($request->message_id);
-        $message->update(['read_at' => now()]);
+        $message->read_at = now();
+        $message->save();
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Message marked as read'
-        ]);
+        return response()->json(['status' => 'success']);
     }
 }

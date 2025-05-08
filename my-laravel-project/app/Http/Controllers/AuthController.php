@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
+use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -12,47 +15,44 @@ class AuthController extends Controller
     // Show Register Page
     public function showRegister()
     {
-        return view('auth.register');
+        return view('Auth.Register');
     }
 
     // Handle Register
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6|confirmed',
-        ]);
+        $validated = $request->validated();
+    
 
-        $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        $validated['role_id'] = 3;
+               // Get the intern role ID
+      
+        
+       
+
+        $user = User::create($validated);
 
         // Login after registration using web guard
         Auth::guard('web')->login($user);
 
-        return redirect('/dashboard');
+        return redirect('dashboard');
     }
 
     // Show Login Page
     public function showLogin()
     {
-        return view('auth.login');
+        return view('Auth.Login');
     }
 
     // Handle Login
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $credentials = $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required',
-        ]);
+        $validated = $request->validated();
 
-        if (Auth::guard('web')->attempt($credentials)) {
+
+        if (Auth::guard('user')->attempt($validated)) {
             $request->session()->regenerate();
-            return redirect('/dashboard');
+            return redirect('dashboard');
         }
 
         return back()->withErrors([
@@ -67,20 +67,39 @@ class AuthController extends Controller
     }
 
     // Handle Admin Login
-    public function adminLogin(Request $request)
+    public function adminLogin(LoginRequest $request)
     {
-        $credentials = $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required',
-        ]);
+        $validated = $request->validated();
 
-        if (Auth::guard('admin')->attempt($credentials)) {
+        if (Auth::guard('admin')->attempt($validated)) {
             $request->session()->regenerate();
-            return redirect()->route('admin.dashboard');
+            return redirect('admin.dashboard');
         }
 
         return back()->withErrors([
-            'email' => 'Invalid admin credentials.',
+            'email' => 'Invalid credentials.',
         ]);
+    }
+
+    // Handle User Logout
+    public function logout(Request $request)
+    {
+        Auth::guard('user')->logout();
+        
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        
+        return redirect('intern.login');
+    }
+
+    // Handle Admin Logout
+    public function adminLogout(Request $request)
+    {
+        Auth::guard('admin')->logout();
+        
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        
+        return redirect('admin.login');
     }
 }

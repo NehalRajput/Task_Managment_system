@@ -1,0 +1,43 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+
+class Admin extends Authenticatable
+{
+    /** @use HasFactory<\Database\Factories\AdminFactory> */
+    use HasFactory;
+
+    protected $guarded = [];
+
+    public function role()
+    { 
+        return $this->belongsTo(Role::class);
+    }
+
+    public function rolePermissions()
+    { 
+        return $this->belongsToMany(Permission::class, 'role_permissions', 'admin_id', 'permission_id');
+    }
+
+    public function hasPermission($permission)
+    { 
+        if ($this->isSuperAdmin()) { 
+            return true; 
+        } 
+
+        return $this->rolePermissions()->where('permission', $permission)->exists();
+    }
+
+    public function isAdmin()
+    { 
+        return $this->role && $this->role->name === 'admin';
+    }
+
+    public function isSuperAdmin()
+    { 
+        return $this->role && $this->role->name === 'super_admin';
+    }
+}

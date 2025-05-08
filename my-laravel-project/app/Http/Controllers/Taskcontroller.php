@@ -12,7 +12,7 @@ class TaskController extends Controller
     public function index()
     {
         $tasks = Task::with('interns')->get();
-        $interns = User::where('role', 'intern')->get();
+        $interns = User::all();
         return view('Admin.Tasks.index', compact('tasks', 'interns'));
     }
     
@@ -20,7 +20,7 @@ class TaskController extends Controller
 
     public function create()
     {
-        $interns = User::where('role', 'intern')->get();
+        $interns = User::all();
         return view('Admin.Tasks.create', compact('interns'));
     }
 
@@ -42,12 +42,12 @@ class TaskController extends Controller
         
         $task->interns()->attach($request->interns);
     
-        return redirect()->route('tasks.index')->with('success', 'Task created!');
+        return redirect()->route('admin.tasks.index')->with('success', 'Task created!');
     }
 
     public function edit(Task $task)
     {
-        $interns = User::where('role', 'intern')->get();
+        $interns = User::all();
         $assigned = $task->interns->pluck('id')->toArray();
         return view('Admin.Tasks.edit', compact('task', 'interns', 'assigned'));
     }
@@ -64,7 +64,7 @@ class TaskController extends Controller
         $task->update($request->only('title', 'description', 'due_date'));
         $task->interns()->sync($request->interns);
 
-        return redirect()->route('tasks.index')->with('success', 'Task updated!'); // Fixed route name
+        return redirect()->route('admin.tasks.index')->with('success', 'Task updated!'); // Fixed route name
     }
 
    
@@ -94,10 +94,10 @@ class TaskController extends Controller
             // Delete the task
             $task->delete();
             
-            return redirect()->route('tasks.index')
+            return redirect()->route('admin.tasks.index')
                 ->with('success', 'Task deleted successfully');
         } catch (\Exception $e) {
-            return redirect()->route('tasks.index')
+            return redirect()->route('admin.tasks.index')
                 ->with('error', 'Error deleting task');
         }
     }
