@@ -46,10 +46,10 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
     });*/
     
     Route::controller(CommentController::class)->group(function () {
-        Route::get('/tasks/{task}/comments', 'index')->name('comments.index');
-        Route::post('/tasks/{task}/comments', 'store')->name('comments.store');
-        Route::put('/comments/{comment}', 'update')->name('comments.update');
-        Route::delete('/comments/{comment}', 'destroy')->name('comments.destroy');
+        Route::get('/tasks/{task}/comments', 'index')->name('comments.index')->middleware('auth:admin');
+        Route::post('/tasks/{task}/comments', 'store')->name('comments.store')->middleware('auth:admin');
+        Route::put('/comments/{comment}', 'update')->name('comments.update')->middleware('auth:admin');
+        Route::delete('/comments/{comment}', 'destroy')->name('comments.destroy')->middleware('auth:admin');
     });
 
     // Admin Logout

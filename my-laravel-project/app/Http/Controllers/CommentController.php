@@ -6,6 +6,7 @@ use App\Models\Comment;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
 
 class CommentController extends Controller
 {
@@ -33,7 +34,7 @@ class CommentController extends Controller
 
     public function update(Request $request, Comment $comment)
     {
-        if (Auth::user()->role !== 'admin') {
+        if (!Auth::guard('admin')->check()) {
             return redirect()->back()->with('error', 'Unauthorized');
         }
 
@@ -50,7 +51,7 @@ class CommentController extends Controller
 
     public function destroy(Comment $comment)
     {
-        if (Auth::user()->role !== 'admin') {
+        if (!Auth::guard('admin')->check()) {
             return redirect()->back()->with('error', 'Unauthorized');
         }
 
