@@ -6764,3 +6764,7 @@
 #56 /Users/nehalrajput1710/Documents/task copy/my-laravel-project/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(23): require_once('/Users/nehalraj...')
 #57 {main}
 "} 
+[2025-05-08 12:07:14] local.WARNING: Admin validation failed {"errors":{"password":["The password field must be at least 6 characters."]},"input":{"_token":"CCMQdtS46oBaihwFaq9z9eXUJFmb6IRUvt4ZevVb","name":"ede","email":"dee@gmail.com","permissions":["5","8"]}} 
+[2025-05-08 12:07:26] local.INFO: Admin validation passed {"email":"admin133@gmail.com"} 
+[2025-05-08 12:07:26] local.INFO: Admin created successfully {"admin_id":21} 
+[2025-05-08 12:07:26] local.INFO: Permissions assigned to admin {"admin_id":21,"permissions":["1","4","7"]} 

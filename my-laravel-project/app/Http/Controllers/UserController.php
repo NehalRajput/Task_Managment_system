@@ -12,12 +12,12 @@ class UserController extends Controller
     public function index()
     {
         $users = User::with('role')->where('role_id', Role::where('name', 'intern')->first()->id)->get();
-        return view('admin.interns.index', compact('users'));
+        return view('Admin.interns.index', compact('users'));
     }
 
     public function create()
     {
-        return view('admin.interns.create');
+        return view('Admin.interns.create');
     }
 
     public function store(Request $request)
@@ -46,7 +46,7 @@ class UserController extends Controller
         if (!$user->isIntern()) {
             abort(403, 'Only intern accounts can be edited here');
         }
-        return view('admin.interns.edit', compact('user'));
+        return view('Admin.interns.edit', compact('user'));
     }
 
     public function update(Request $request, User $user)
@@ -87,6 +87,6 @@ class UserController extends Controller
     public function dashboard()
     {
         // Add intern dashboard logic here
-        return view('intern.dashboard');
+        return view('dashboard');
     }
 } 
