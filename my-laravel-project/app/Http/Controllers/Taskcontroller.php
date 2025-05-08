@@ -12,7 +12,8 @@ class TaskController extends Controller
     public function index()
     {
         $tasks = Task::with('interns')->get();
-        return view('Admin.Tasks.index', compact('tasks'));
+        $interns = User::where('role', 'intern')->get();
+        return view('Admin.Tasks.index', compact('tasks', 'interns'));
     }
     
 
@@ -76,5 +77,28 @@ class TaskController extends Controller
         $task->interns()->attach($validated['intern_id']);
 
         return redirect()->back()->with('success', 'Intern assigned successfully');
+    }
+
+    public function detachIntern(Request $request, Task $task, User $intern)
+    {
+        $task->interns()->detach($intern->id);
+        return redirect()->back()->with('success', 'Intern removed from task successfully');
+    }
+
+    public function destroy(Task $task)
+    {
+        try {
+            // Delete associated records in the pivot table
+            $task->interns()->detach();
+            
+            // Delete the task
+            $task->delete();
+            
+            return redirect()->route('tasks.index')
+                ->with('success', 'Task deleted successfully');
+        } catch (\Exception $e) {
+            return redirect()->route('tasks.index')
+                ->with('error', 'Error deleting task');
+        }
     }
 }

@@ -12,8 +12,13 @@
             <p class="mt-4 text-center text-gray-600">Welcome to your dashboard</p>
         </div>
 
-        <div class="mt-10 text-center">
-            <form method="POST" action="{{ route('logout') }}" class="inline">
+        <div class="mt-10 text-center space-y-4">
+            <a href="{{ route('intern.tasks') }}" 
+               class="inline-block rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                View My Tasks
+            </a>
+
+            <form method="POST" action="{{ route('logout') }}" class="block">
                 @csrf
                 <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                     Logout
