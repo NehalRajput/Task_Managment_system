@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Laravel') }}</title>
     
     <!-- Scripts and Styles -->
@@ -13,6 +14,10 @@
     
     <!-- Alpine.js -->
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 <body class="bg-gray-100">
     <div>
@@ -25,8 +30,7 @@
                             <!-- Logo -->
                             <div class="flex-shrink-0 flex items-center">
                                 <a href="{{ route('dashboard') }}">
-                                    <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg" alt="Logo">
-                                </a>
+                                   </a>
                             </div>
 
                             <!-- Navigation Links -->
@@ -35,17 +39,12 @@
                                     <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                                         Dashboard
                                     </a>
-                                    <a href="{{ route('chat.index') }}" class="nav-link {{ request()->routeIs('chat.*') ? 'active' : '' }}">
-                                        Chat
-                                    </a>
+                                  
                                 @elseif(Auth::guard('admin')->check())
                                     <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                                         Dashboard
                                     </a>
 
-                                    <a href="{{ route('admin.chat.index') }}" class="nav-link {{ request()->routeIs('admin.chat.*') ? 'active' : '' }}">
-                                        Chat
-                                    </a>
 
                                     <a href="{{ route('admin.interns.index') }}" class="nav-link {{ request()->routeIs('admin.interns.*') ? 'active' : '' }}">
                                         Intern

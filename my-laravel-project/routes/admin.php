@@ -36,13 +36,15 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
         Route::delete('/{intern}', 'destroy')->name('destroy');
     });
 
+    /*
     // Chat System
     Route::controller(ChatController::class)->prefix('chat')->name('chat.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('/send', 'sendMessage')->name('send');
         Route::get('/messages/{user}', 'getMessages')->name('messages');
         Route::post('/mark-read', 'markAsRead')->name('mark-read');
-    });
+    });*/
+    
     Route::controller(CommentController::class)->group(function () {
         Route::get('/tasks/{task}/comments', 'index')->name('comments.index');
         Route::post('/tasks/{task}/comments', 'store')->name('comments.store');

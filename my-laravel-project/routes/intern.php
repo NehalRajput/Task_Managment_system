@@ -24,13 +24,13 @@ Route::middleware("auth:user")->group(function () {
     Route::get('/dashboard', [UserController::class, 'dashboard'])->name('dashboard');
     
     // Chat System
-    Route::controller(ChatController::class)->prefix('chat')->name('chat.')->group(function () {
+    /*Route::controller(ChatController::class)->prefix('chat')->name('chat.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('/send', 'sendMessage')->name('send');
         Route::get('/messages/{admin}', 'getMessages')->name('messages');
         Route::post('/mark-read', 'markAsRead')->name('mark-read');
     });
-
+*/
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

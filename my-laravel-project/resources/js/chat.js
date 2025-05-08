@@ -9,7 +9,7 @@ window.Echo = new Echo({
     cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
     forceTLS: true
 });
-
+/*
 // Subscribe to private channel
 const userId = document.querySelector('meta[name="user-id"]').content;
 window.Echo.private(`chat.${userId}`)
@@ -18,7 +18,7 @@ window.Echo.private(`chat.${userId}`)
         const message = e.message;
         appendMessage(message);
     });
-
+*/
 // Function to send message
 function sendMessage(receiverId, message) {
     axios.post('/chat/send', {
