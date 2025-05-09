@@ -13,27 +13,20 @@ class CommentController extends Controller
 {
     public function store(Request $request, Task $task)
     {
-        try {
-            $request->validate([
-                'content' => 'required|string',
-                'is_query' => 'boolean'
-            ]);
+        $request->validate([
+            'content' => 'required|string',
+            'is_query' => 'boolean'
+        ]);
 
-            $task->comments()->create([
-                'content' => $request->content,
-                'user_id' => Auth::id(),
-                'is_query' => $request->is_query ?? false
-            ]);
+        $comment = new Comment([
+            'content' => $request->content,
+            'is_query' => $request->boolean('is_query', false),
+            'user_id' => Auth::id()
+        ]);
 
-            return redirect()->back()->with('success', 'Comment added successfully');
-        } catch (\Exception $e) {
-            Log::error('Failed to store comment', [
-                'error' => $e->getMessage(),
-                'task_id' => $task->id,
-                'user_id' => Auth::id()
-            ]);
-            return redirect()->back()->with('error', 'Failed to add comment. Please try again.');
-        }
+        $task->comments()->save($comment);
+
+        return back()->with('success', 'Comment added successfully');
     }
 
     public function index(Task $task)

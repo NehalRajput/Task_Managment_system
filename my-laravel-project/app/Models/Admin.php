@@ -40,4 +40,20 @@ class Admin extends Authenticatable
     {
         return $this->role && $this->role->name === 'super_admin';
     }
+
+    /**
+     * Get messages received by the admin
+     */
+    public function receivedMessages()
+    {
+        return $this->morphMany(Message::class, 'receiver');
+    }
+
+    /**
+     * Get messages sent by the admin
+     */
+    public function sentMessages()
+    {
+        return $this->morphMany(Message::class, 'sender');
+    }
 }

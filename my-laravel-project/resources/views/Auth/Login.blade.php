@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('Layouts.app')
 
 @section('content')
 <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -8,7 +8,7 @@
                 Sign in to your account
             </h2>
         </div>
-        <form class="mt-8 space-y-6" action="{{ route('login') }}" method="POST">
+        <form class="mt-8 space-y-6" action="{{ route('intern.login') }}" method="POST">
             @csrf
             <div class="rounded-md shadow-sm -space-y-px">
                 <div>
@@ -36,7 +36,7 @@
             </div>
 
             <div class="text-sm text-center">
-                <a href="{{ route('register') }}" class="font-medium text-indigo-600 hover:text-indigo-500">
+                <a href="{{ route('intern.register') }}" class="font-medium text-indigo-600 hover:text-indigo-500">
                     Don't have an account? Register
                 </a>
             </div>

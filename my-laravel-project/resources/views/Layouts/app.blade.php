@@ -9,15 +9,19 @@
     <!-- Scripts and Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
     <!-- Pusher -->
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     
     <!-- Alpine.js -->
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    @stack('styles')
 </head>
 <body class="bg-gray-100">
     <div>
@@ -38,6 +42,17 @@
                                 @if(Auth::guard('user')->check())
                                     <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                                         Dashboard
+                                    </a>
+                                    <a href="{{ route('intern.tasks.index') }}" class="nav-link {{ request()->routeIs('intern.tasks.*') ? 'active' : '' }}">
+                                        Tasks
+                                    </a>
+                                    <a href="{{ route('chat') }}" class="nav-link {{ request()->routeIs('chat') ? 'active' : '' }}">
+                                        Messages
+                                        @if(auth()->user()->receivedMessages()->whereNull('read_at')->count() > 0)
+                                            <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                {{ auth()->user()->receivedMessages()->whereNull('read_at')->count() }}
+                                            </span>
+                                        @endif
                                     </a>
                                   
                                 @elseif(Auth::guard('admin')->check())
@@ -62,6 +77,15 @@
                                         Tasks
                                     </a>
                                     @endcan
+
+                                    <a href="{{ route('chat') }}" class="nav-link {{ request()->routeIs('chat') ? 'active' : '' }}">
+                                        Messages
+                                        @if(auth()->user()->receivedMessages()->whereNull('read_at')->count() > 0)
+                                            <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                {{ auth()->user()->receivedMessages()->whereNull('read_at')->count() }}
+                                            </span>
+                                        @endif
+                                    </a>
                                 @endif
                             </div>
                         </div>
@@ -105,5 +129,7 @@
             @apply border-b-2 border-indigo-500 text-gray-900;
         }
     </style>
+
+    @stack('scripts')
 </body>
 </html>

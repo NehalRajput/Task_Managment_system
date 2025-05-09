@@ -6,19 +6,18 @@ use Illuminate\Http\Request;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
     public function index()
     {
-        try {
-            $tasks = Task::with('interns')->get();
-            $interns = User::all();
-            return view('Admin.Tasks.index', compact('tasks', 'interns'));
-        } catch (\Exception $e) {
-            Log::error('Failed to load tasks', ['error' => $e->getMessage()]);
-            return redirect()->back()->with('error', 'Failed to load tasks.');
-        }
+        $tasks = Auth::user()->assignedTasks()
+            ->with(['comments.user'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('intern.tasks', compact('tasks'));
     }
 
     public function create()
@@ -130,5 +129,16 @@ class TaskController extends Controller
             return redirect()->route('admin.tasks.index')
                 ->with('error', 'Error deleting task');
         }
+    }
+
+    public function updateStatus(Request $request, Task $task)
+    {
+        $request->validate([
+            'status' => 'required|in:pending,todo,completed'
+        ]);
+
+        $task->update(['status' => $request->status]);
+
+        return back()->with('success', 'Task status updated successfully');
     }
 }

@@ -1,6 +1,7 @@
 @extends('Layouts.app')
 
 @section('content')
+
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
 <div class="min-h-screen bg-gray-100 py-6 flex flex-col lg:flex-row gap-6">
